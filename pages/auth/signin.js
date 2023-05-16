@@ -47,12 +47,15 @@ export default function Signin() {
           </p>
           <button
             onClick={onGoogleClick}
-            className="bg-red-400 w-200px rounded-lg p-3 text-white hover:bg-red-500"
+            className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500"
           >
             Sign in with Google
           </button>
           <button
-            className="bg-blue-400 mt-3 w-200px rounded-lg p-3 text-white hover:bg-blue-500"
+            onClick={() => {
+              router.push("/signup");
+            }}
+            className="bg-blue-400 mt-3 rounded-lg p-3 text-white hover:bg-blue-500"
           >
             Sign in with Email
           </button>

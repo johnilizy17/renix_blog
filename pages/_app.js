@@ -5,13 +5,13 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <ChakraProvider>
     <SessionProvider session={session}>
       <RecoilRoot>
-        <Component {...pageProps} />
+        <ChakraProvider>
+          <Component {...pageProps} />
+        </ChakraProvider>
       </RecoilRoot>
     </SessionProvider>
-    </ChakraProvider>
   );
 }
 
