@@ -10,18 +10,19 @@ export default function Signin() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       const user = auth.currentUser.providerData[0];
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) {
-        await setDoc(docRef, {
-          name: user.displayName,
-          email: user.email,
-          username: user.displayName.split(" ").join("").toLocaleLowerCase(),
-          userImg: user.photoURL,
-          uid: user.uid,
-          timestamp: serverTimestamp(),
-        });
-      }
+      console.log(user)
+      // const docRef = doc(db, "users", user.uid);
+      // const docSnap = await getDoc(docRef);
+      // if (!docSnap.exists()) {
+      //   await setDoc(docRef, {
+      //     name: user.displayName,
+      //     email: user.email,
+      //     username: user.displayName.split(" ").join("").toLocaleLowerCase(),
+      //     userImg: user.photoURL,
+      //     uid: user.uid,
+      //     timestamp: serverTimestamp(),
+      //   });
+      // }
       router.push("/");
     } catch (error) {
       console.log(error);
@@ -46,9 +47,14 @@ export default function Signin() {
           </p>
           <button
             onClick={onGoogleClick}
-            className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500"
+            className="bg-red-400 w-200px rounded-lg p-3 text-white hover:bg-red-500"
           >
             Sign in with Google
+          </button>
+          <button
+            className="bg-blue-400 mt-3 w-200px rounded-lg p-3 text-white hover:bg-blue-500"
+          >
+            Sign in with Email
           </button>
         </div>
       </div>
