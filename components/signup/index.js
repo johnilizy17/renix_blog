@@ -72,7 +72,7 @@ export default function SignUpEmail() {
 
                 if (response) {
                     toast({
-                        title: response?data.msg,
+                        title: response?.data.msg,
                         position: "bottom",
                         status: "success",
                         isClosable: true,
