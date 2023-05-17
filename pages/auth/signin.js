@@ -2,28 +2,32 @@ import { db } from "../../firebase";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
+import { googleAuth } from "../../services/authBlog";
+import { useToast } from "@chakra-ui/react";
 export default function Signin() {
+
   const router = useRouter();
+  const toast = useToast()
+  let response
   const onGoogleClick = async () => {
     try {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       const user = auth.currentUser.providerData[0];
-      console.log(user)
-      // const docRef = doc(db, "users", user.uid);
-      // const docSnap = await getDoc(docRef);
-      // if (!docSnap.exists()) {
-      //   await setDoc(docRef, {
-      //     name: user.displayName,
-      //     email: user.email,
-      //     username: user.displayName.split(" ").join("").toLocaleLowerCase(),
-      //     userImg: user.photoURL,
-      //     uid: user.uid,
-      //     timestamp: serverTimestamp(),
-      //   });
-      // }
-      router.push("/");
+    
+        response = await googleAuth({firstname:user.displayName.split("")[0], lastname: user.displayName.split("")[1], email:user.email, username:user.email});
+        if (response) {
+            localStorage.setItem("token", response?.data.access_token);
+            toast({
+                title: response?.data.msg,
+                position: "bottom",
+                status: "success",
+                isClosable: true,
+            });
+            router.push("/");
+          } 
+      // router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -53,7 +57,7 @@ export default function Signin() {
           </button>
           <button
             onClick={() => {
-              router.push("/signup");
+              router.push("/auth/email");
             }}
             className="bg-blue-400 mt-3 rounded-lg p-3 text-white hover:bg-blue-500"
           >

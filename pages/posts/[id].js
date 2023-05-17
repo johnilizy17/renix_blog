@@ -16,6 +16,7 @@ import {
 import { db } from "../../firebase";
 import Comment from "../../components/Comment";
 import { AnimatePresence, motion } from "framer-motion";
+import { getSinglePost } from "../../services/authBlog";
 
 export default function PostPage({ newsResults, randomUsersResults }) {
   const router = useRouter();
@@ -23,24 +24,19 @@ export default function PostPage({ newsResults, randomUsersResults }) {
   const [post, setPost] = useState();
   const [comments, setComments] = useState([]);
 
-  // get the post data
-
-  useEffect(
-    () => onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot)),
-    [db, id]
-  );
 
   // get comments of the post
 
   useEffect(() => {
-    onSnapshot(
-      query(
-        collection(db, "posts", id, "comments"),
-        orderBy("timestamp", "desc")
-      ),
-      (snapshot) => setComments(snapshot.docs)
-    );
-  }, [db, id]);
+    async function fetchingpost() {
+      if (id) {
+        const res = await getSinglePost(id)
+        setPost(res.data)
+        setComments(res.data.comments)
+      }
+    }
+    fetchingpost()
+  }, [id]);
 
   return (
     <div>
@@ -65,24 +61,23 @@ export default function PostPage({ newsResults, randomUsersResults }) {
               Tweet
             </h2>
           </div>
-
           <Post id={id} post={post} />
           {comments.length > 0 && (
             <div className="">
               <AnimatePresence>
                 {comments.map((comment) => (
                   <motion.div
-                    key={comment.id}
+                    key={comment._id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1 }}
                   >
                     <Comment
-                      key={comment.id}
-                      commentId={comment.id}
+                      key={comment._id}
+                      commentId={comment._id}
                       originalPostId={id}
-                      comment={comment.data()}
+                      comment={comment}
                     />
                   </motion.div>
                 ))}

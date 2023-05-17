@@ -84,14 +84,11 @@ export default function Comment({ comment, commentId, originalPostId }) {
     }
   }
 
+  console.log(comment)
   return (
     <div className="flex p-3 cursor-pointer border-b border-gray-200 pl-20">
       {/* user image */}
-      <img
-        className="h-11 w-11 rounded-full mr-4"
-        src={comment?.userImg}
-        alt="user-img"
-      />
+   
       {/* right side */}
       <div className="flex-1">
         {/* Header */}
@@ -117,41 +114,29 @@ export default function Comment({ comment, commentId, originalPostId }) {
         {/* post text */}
 
         <p className="text-gray-800 text-[15px sm:text-[16px] mb-2">
-          {comment?.comment}
+          {comment?.text}
         </p>
 
         {/* icons */}
 
         <div className="flex justify-between text-gray-500 p-2">
           <div className="flex items-center select-none">
-            <ChatIcon
-              onClick={() => {
-                if (!currentUser) {
-                  // signIn();
-                  router.push("/auth/signin");
-                } else {
-                  setPostId(originalPostId);
-                  setOpen(!open);
-                }
-              }}
+            <ChatIcon    
               className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
             />
           </div>
           {currentUser?.uid === comment?.userId && (
             <TrashIcon
-              onClick={deleteComment}
               className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
             />
           )}
           <div className="flex items-center">
             {hasLiked ? (
               <HeartIconFilled
-                onClick={likeComment}
                 className="h-9 w-9 hoverEffect p-2 text-red-600 hover:bg-red-100"
               />
             ) : (
               <HeartIcon
-                onClick={likeComment}
                 className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
               />
             )}

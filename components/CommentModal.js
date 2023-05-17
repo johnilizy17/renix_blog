@@ -18,6 +18,8 @@ import {
 } from "firebase/firestore";
 import Moment from "react-moment";
 import { userState } from "../atom/userAtom";
+import { UpdataPost } from "../services/authBlog";
+
 export default function CommentModal() {
   const [open, setOpen] = useRecoilState(modalState);
   const [postId] = useRecoilState(postIdState);
@@ -26,25 +28,18 @@ export default function CommentModal() {
   const [input, setInput] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    onSnapshot(doc(db, "posts", postId), (snapshot) => {
-      setPost(snapshot);
-    });
-  }, [postId, db]);
-
   async function sendComment() {
-    await addDoc(collection(db, "posts", postId, "comments"), {
-      comment: input,
-      name: currentUser.name,
-      username: currentUser.username,
-      userImg: currentUser.userImg,
-      timestamp: serverTimestamp(),
-      userId: currentUser.uid,
-    });
 
-    setOpen(false);
-    setInput("");
-    router.push(`/posts/${postId}`);
+    const comments = [...postId.comments]
+    comments.push({ text: input, postedBy: currentUser._id })
+    try {
+      await UpdataPost(postId._id,{comments:comments})
+      setOpen(false);
+      setInput("");
+      router.push(`/posts/${postId._id}`);
+    } catch {
+
+    }
   }
 
   return (
@@ -68,26 +63,26 @@ export default function CommentModal() {
               <span className="w-0.5 h-full z-[-1] absolute left-8 top-11 bg-gray-300" />
               <img
                 className="h-11 w-11 rounded-full mr-4"
-                src={post?.data()?.userImg}
+                src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png"
                 alt="user-img"
               />
               <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">
-                {post?.data()?.name}
+                {postId.lastname}
               </h4>
               <span className="text-sm sm:text-[15px]">
-                @{post?.data()?.username} -{" "}
+                @{postId.username} -{" "}
               </span>
               <span className="text-sm sm:text-[15px] hover:underline">
-                <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
+                <Moment fromNow>{postId.createdAt}</Moment>
               </span>
             </div>
             <p className="text-gray-500 text-[15px] sm:text-[16px] ml-16 mb-2">
-              {post?.data()?.text}
+              {postId.body}
             </p>
 
             <div className="flex  p-3 space-x-3">
               <img
-                src={currentUser.userImg}
+                src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png"
                 alt="user-img"
                 className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
               />
@@ -104,19 +99,7 @@ export default function CommentModal() {
 
                 <div className="flex items-center justify-between pt-2.5">
                   <div className="flex">
-                    <div
-                      className=""
-                      // onClick={() => filePickerRef.current.click()}
-                    >
-                      <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
-                      {/* <input
-                        type="file"
-                        hidden
-                        ref={filePickerRef}
-                        onChange={addImageToPost}
-                      /> */}
-                    </div>
-                    <EmojiHappyIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+
                   </div>
                   <button
                     onClick={sendComment}

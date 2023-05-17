@@ -11,7 +11,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
-
+import {PostBlog} from '../services/authBlog'
 import { useState, useRef } from "react";
 import { db, storage } from "../firebase";
 import { useRecoilState } from "recoil";
@@ -21,43 +21,28 @@ export default function Input() {
   const [input, setInput] = useState("");
   const [currentUser, setCurrentUser] = useRecoilState(userState);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [image, setImage]= useState()
   const [loading, setLoading] = useState(false);
   const filePickerRef = useRef(null);
   const auth = getAuth();
 
   const sendPost = async () => {
-    if (loading) return;
     setLoading(true);
+    if(input){
+    await PostBlog({title:input, image:image, body:input})
+  }
 
-    const docRef = await addDoc(collection(db, "posts"), {
-      id: currentUser.uid,
-      text: input,
-      userImg: currentUser.userImg,
-      timestamp: serverTimestamp(),
-      name: currentUser.name,
-      username: currentUser.username,
-    });
-
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
-
-    if (selectedFile) {
-      await uploadString(imageRef, selectedFile, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "posts", docRef.id), {
-          image: downloadURL,
-        });
-      });
-    }
-
-    setInput("");
-    setSelectedFile(null);
-    setLoading(false);
-  };
+  setInput("");
+  setImage(null)
+  setSelectedFile(null);
+  setLoading(false);
+};
 
   const addImageToPost = (e) => {
     const reader = new FileReader();
     if (e.target.files[0]) {
       reader.readAsDataURL(e.target.files[0]);
+      setImage(e.target.files[0])
     }
 
     reader.onload = (readerEvent) => {
@@ -65,18 +50,13 @@ export default function Input() {
     };
   };
 
-  function onSignOut() {
-    signOut(auth);
-    setCurrentUser(null);
-  }
 
   return (
     <>
       {currentUser && (
         <div className="flex  border-b border-gray-200 p-3 space-x-3">
           <img
-            onClick={onSignOut}
-            src={currentUser?.userImg}
+            src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png"
             alt="user-img"
             className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
           />
