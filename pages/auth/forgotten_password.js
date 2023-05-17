@@ -3,8 +3,7 @@ import Router, { useRouter } from 'next/router'
 import { motion } from 'framer-motion';
 import * as yup from 'yup'
 import { useFormik } from 'formik';
-import { Image, Input, useToast } from '@chakra-ui/react'
-// import { useLoginCallback } from '../../services/authService';
+import { Image, Input, Spinner, useToast } from '@chakra-ui/react'
 
 export default function ForgottenPassword() {
 
@@ -96,7 +95,7 @@ export default function ForgottenPassword() {
                     </div>
                 </div>
                 <button disabled={loading} onClick={() => submit()} className=' w-full h-[45px] rounded-[5px] text-white bg-[#1DA1F2] font-Inter-ExtraBold text-sm mt-3 '>
-                    {loading ? <SpinLoader size="xs" /> : "SUMBIT"}
+                    {loading ? <Spinner size="xs" /> : "SUMBIT"}
                 </button>
                 <p className=' text-sm text-center mt-6 font-medium ' >Remember your password? <span onClick={() => Router.push("/login")} className=' text-[#1DA1F2] cursor-pointer ml-1 font-bold ' >Log In</span></p>
             </div>

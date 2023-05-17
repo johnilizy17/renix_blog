@@ -3,8 +3,7 @@ import Router, { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { Image, Input, useToast } from "@chakra-ui/react";
-// import { useLoginCallback } from "../../services/authService";
+import { Image, Input, Spinner, useToast } from "@chakra-ui/react";
 
 export default function Login() {
     const toast = useToast();
@@ -171,7 +170,7 @@ export default function Login() {
                     onClick={() => submit()}
                     className=" w-full h-[45px] rounded-[5px] text-white bg-[#1DA1F2] font-Inter-ExtraBold text-sm mt-3 "
                 >
-                    {loading ? <SpinLoader size="xs" /> : "LOGIN"}
+                    {loading ? <Spinner size="xs" /> : "LOGIN"}
                 </button>
 
             </div>
